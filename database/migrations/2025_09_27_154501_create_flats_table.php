@@ -16,10 +16,10 @@ return new class extends Migration
             $table->string('flat_number');
             $table->string('owner_name');
             $table->string('owner_contact');
-            $table->string('owner_email')->nullable();
+            $table->string('owner_email');
             $table->foreignId('building_id')->constrained()->onDelete('cascade');
             $table->timestamps();
-            
+
             $table->unique(['building_id', 'flat_number']);
             $table->index('building_id');
         });

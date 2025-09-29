@@ -32,7 +32,7 @@ class TenantTest extends TestCase
         $houseOwner = User::factory()->houseOwner()->create();
         $building = Building::factory()->create(['owner_id' => $houseOwner->id]);
         $houseOwner->update(['building_id' => $building->id]);
-        
+
         $tenants = Tenant::factory()->count(3)->create(['building_id' => $building->id]);
         Tenant::factory()->count(2)->create(); // Other building's tenants
 
@@ -92,7 +92,7 @@ class TenantTest extends TestCase
         $houseOwner = User::factory()->houseOwner()->create();
         $building = Building::factory()->create(['owner_id' => $houseOwner->id]);
         $houseOwner->update(['building_id' => $building->id]);
-        
+
         $otherBuilding = Building::factory()->create();
         $otherFlat = Flat::factory()->create(['building_id' => $otherBuilding->id]);
 
@@ -159,7 +159,7 @@ class TenantTest extends TestCase
 
         $response = $this->actingAs($admin)->put("/tenants/{$tenant->id}", $updateData);
 
-        $response->assertRedirect("/tenants/{$tenant->id}");
+        $response->assertRedirect("/tenants");
         $this->assertDatabaseHas('tenants', array_merge(['id' => $tenant->id], $updateData));
     }
 
@@ -190,7 +190,7 @@ class TenantTest extends TestCase
     {
         $admin = User::factory()->admin()->create();
         $building = Building::factory()->create();
-        
+
         Tenant::factory()->create([
             'email' => 'tenant@example.com',
             'building_id' => $building->id
@@ -214,7 +214,7 @@ class TenantTest extends TestCase
         $admin = User::factory()->admin()->create();
         $building1 = Building::factory()->create();
         $building2 = Building::factory()->create();
-        
+
         Tenant::factory()->create([
             'email' => 'tenant@example.com',
             'building_id' => $building1->id

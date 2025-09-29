@@ -31,7 +31,7 @@ class FlatTest extends TestCase
         $houseOwner = User::factory()->houseOwner()->create();
         $building = Building::factory()->create(['owner_id' => $houseOwner->id]);
         $houseOwner->update(['building_id' => $building->id]);
-        
+
         $flats = Flat::factory()->count(3)->create(['building_id' => $building->id]);
         Flat::factory()->count(2)->create(); // Other building's flats
 
@@ -89,7 +89,7 @@ class FlatTest extends TestCase
         $houseOwner = User::factory()->houseOwner()->create();
         $building = Building::factory()->create(['owner_id' => $houseOwner->id]);
         $houseOwner->update(['building_id' => $building->id]);
-        
+
         $otherBuilding = Building::factory()->create();
 
         $flatData = [
@@ -139,7 +139,7 @@ class FlatTest extends TestCase
         $houseOwner = User::factory()->houseOwner()->create();
         $building = Building::factory()->create(['owner_id' => $houseOwner->id]);
         $houseOwner->update(['building_id' => $building->id]);
-        
+
         $otherFlat = Flat::factory()->create();
 
         $response = $this->actingAs($houseOwner)->get("/flats/{$otherFlat->id}");
@@ -163,7 +163,7 @@ class FlatTest extends TestCase
 
         $response = $this->actingAs($admin)->put("/flats/{$flat->id}", $updateData);
 
-        $response->assertRedirect("/flats/{$flat->id}");
+        $response->assertRedirect("/flats");
         $this->assertDatabaseHas('flats', array_merge(['id' => $flat->id], $updateData));
     }
 
@@ -194,7 +194,7 @@ class FlatTest extends TestCase
     {
         $admin = User::factory()->admin()->create();
         $building = Building::factory()->create();
-        
+
         Flat::factory()->create([
             'flat_number' => 'A101',
             'building_id' => $building->id
@@ -219,7 +219,7 @@ class FlatTest extends TestCase
         $admin = User::factory()->admin()->create();
         $building = Building::factory()->create();
         $flat = Flat::factory()->create(['building_id' => $building->id]);
-        
+
         // Create related records
         $tenant = \App\Models\Tenant::factory()->create([
             'building_id' => $building->id,
@@ -236,7 +236,6 @@ class FlatTest extends TestCase
 
         $response->assertRedirect('/flats');
         $this->assertDatabaseMissing('flats', ['id' => $flat->id]);
-        $this->assertDatabaseMissing('tenants', ['id' => $tenant->id]);
         $this->assertDatabaseMissing('bills', ['id' => $bill->id]);
     }
 

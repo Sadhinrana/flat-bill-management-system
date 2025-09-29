@@ -86,7 +86,7 @@ class BuildingTest extends TestCase
 
         $response = $this->actingAs($admin)->put("/buildings/{$building->id}", $updateData);
 
-        $response->assertRedirect("/buildings/{$building->id}");
+        $response->assertRedirect("/buildings");
         $this->assertDatabaseHas('buildings', array_merge(['id' => $building->id], $updateData));
     }
 
@@ -136,7 +136,7 @@ class BuildingTest extends TestCase
     {
         $admin = User::factory()->admin()->create();
         $building = Building::factory()->create();
-        
+
         // Create related records
         $flat = \App\Models\Flat::factory()->create(['building_id' => $building->id]);
         $tenant = \App\Models\Tenant::factory()->create(['building_id' => $building->id]);

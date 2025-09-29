@@ -19,29 +19,57 @@ class DashboardTest extends TestCase
     /** @test */
     public function admin_can_view_dashboard_with_all_data()
     {
+        $this->withoutExceptionHandling();
+
         $admin = User::factory()->admin()->create();
-        
-        // Create test data
+
+        // Create test data with specific counts
         $building1 = Building::factory()->create();
         $building2 = Building::factory()->create();
-        
-        Flat::factory()->count(3)->create(['building_id' => $building1->id]);
-        Flat::factory()->count(2)->create(['building_id' => $building2->id]);
-        
-        Tenant::factory()->count(2)->create(['building_id' => $building1->id]);
-        Tenant::factory()->count(1)->create(['building_id' => $building2->id]);
-        
-        Bill::factory()->count(4)->create(['building_id' => $building1->id]);
-        Bill::factory()->count(2)->create(['building_id' => $building2->id]);
+
+        // Create exactly 3 flats for building1
+        Flat::factory(3)->create([
+            'building_id' => $building1->id
+        ]);
+
+        // Create exactly 2 flats for building2
+        Flat::factory(2)->create([
+            'building_id' => $building2->id
+        ]);
+
+        // Create tenants
+        Tenant::factory(2)->create([
+            'building_id' => $building1->id,
+            'flat_id' => Flat::where('building_id', $building1->id)->first()->id
+        ]);
+        Tenant::factory()->create([
+            'building_id' => $building2->id,
+            'flat_id' => Flat::where('building_id', $building2->id)->first()->id
+        ]);
+
+        // Create bills
+        $category1 = BillCategory::factory()->create(['building_id' => $building1->id]);
+        $category2 = BillCategory::factory()->create(['building_id' => $building2->id]);
+
+        Bill::factory(4)->create([
+            'building_id' => $building1->id,
+            'flat_id' => Flat::where('building_id', $building1->id)->first()->id,
+            'bill_category_id' => $category1->id
+        ]);
+        Bill::factory(2)->create([
+            'building_id' => $building2->id,
+            'flat_id' => Flat::where('building_id', $building2->id)->first()->id,
+            'bill_category_id' => $category2->id
+        ]);
 
         $response = $this->actingAs($admin)->get('/dashboard');
 
-        $response->assertStatus(200);
-        $response->assertViewIs('dashboard.admin');
-        $response->assertViewHas('totalFlats', 5);
-        $response->assertViewHas('totalTenants', 3);
-        $response->assertViewHas('totalBills', 6);
-        $response->assertViewHas('buildings');
+        $response->assertStatus(200)
+            ->assertViewIs('dashboard.admin')
+            ->assertViewHas('totalFlats', 5)
+            ->assertViewHas('totalTenants', 3)
+            ->assertViewHas('totalBills', 6)
+            ->assertViewHas('buildings');
     }
 
     /** @test */
@@ -49,10 +77,10 @@ class DashboardTest extends TestCase
     {
         $houseOwner = User::factory()->houseOwner()->create();
         $building = Building::factory()->create(['owner_id' => $houseOwner->id]);
-        
+
         // Update user's building_id
         $houseOwner->update(['building_id' => $building->id]);
-        
+
         // Create test data for this building
         Flat::factory()->count(3)->create(['building_id' => $building->id]);
         Tenant::factory()->count(2)->create(['building_id' => $building->id]);
