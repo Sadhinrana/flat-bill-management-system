@@ -8,6 +8,7 @@ A comprehensive Laravel-based system for managing buildings, flats, tenants, and
 
 #### Admin (Super Admin)
 - Can create and manage House Owners
+- Can create and manage Buildings
 - Can create Tenants
 - Can view Tenant details
 - Can remove tenants
@@ -32,6 +33,7 @@ A comprehensive Laravel-based system for managing buildings, flats, tenants, and
 
 ### Core Functionality
 - **Buildings Management**: Create, update, delete buildings
+- **House Owner Management**: Create, update, delete house owners
 - **Flats Management**: Manage flats with owner details
 - **Tenant Management**: Assign tenants to buildings and flats
 - **Bill Categories**: Create custom bill categories per building
@@ -42,7 +44,7 @@ A comprehensive Laravel-based system for managing buildings, flats, tenants, and
 
 - **Backend**: Laravel 12.x
 - **Frontend**: Tailwind CSS (included with Laravel)
-- **Database**: MySQL/PostgreSQL
+- **Database**: SQLite/MySQL/PostgreSQL
 - **Authentication**: Laravel's built-in authentication
 - **Email**: Laravel Mail with customizable templates
 
@@ -51,13 +53,13 @@ A comprehensive Laravel-based system for managing buildings, flats, tenants, and
 ### Prerequisites
 - PHP 8.2 or higher
 - Composer
-- MySQL/PostgreSQL
+- SQLite/MySQL/PostgreSQL
 - Node.js & NPM (for asset compilation)
 
 ### Step 1: Clone and Install Dependencies
 
 ```bash
-git clone <repository-url>
+git clone git@github.com:Sadhinrana/flat-bill-management-system.git
 cd multi-tenant-flat-bill-management-system
 composer install
 ```
@@ -151,7 +153,7 @@ After running the seeders, you can use these credentials:
 
 ### Key Relationships
 
-- Users (house_owner) → Buildings (one-to-many)
+- Users (house_owner) → Buildings (one-to-one)
 - Buildings → Flats (one-to-many)
 - Buildings → Tenants (one-to-many)
 - Buildings → Bill Categories (one-to-many)
@@ -184,8 +186,6 @@ The system uses **column-based tenant identification** with the following approa
 - `GET /login` - Login form
 - `POST /login` - Process login
 - `POST /logout` - Logout user
-- `GET /register` - Registration form
-- `POST /register` - Process registration
 
 ### Protected Routes (require authentication)
 - `GET /dashboard` - Dashboard (role-specific)
@@ -196,6 +196,7 @@ The system uses **column-based tenant identification** with the following approa
 - `DELETE /buildings/{id}` - Delete building
 
 Similar CRUD endpoints exist for:
+- `/house-owners`
 - `/flats`
 - `/tenants`
 - `/bill-categories`
@@ -232,6 +233,8 @@ Similar CRUD endpoints exist for:
 ### Code Structure
 - **Models**: Located in `app/Models/` with proper relationships and scopes
 - **Controllers**: Resource controllers with authorization checks
+- **Services**: Services for business logic (e.g., BillService)
+- **Repositories**: Data access layer for complex queries
 - **Middleware**: Custom middleware for multi-tenant isolation
 - **Views**: Tailwind CSS-based responsive UI
 - **Mail**: Customizable email templates
@@ -277,4 +280,4 @@ This project is licensed under the MIT License.
 
 ## Support
 
-For support and questions, please contact the development team or create an issue in the repository.
+For support and questions, please contact me or create an issue in the repository.
